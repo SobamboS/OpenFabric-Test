@@ -39,6 +39,8 @@ public class Worker extends Datable implements Serializable {
         this.command=command;
     }
 
+
+
     public Worker(String name,int port,WorkerStatus running){
         super();
     }
