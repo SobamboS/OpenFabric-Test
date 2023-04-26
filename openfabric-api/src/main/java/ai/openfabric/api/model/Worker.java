@@ -25,12 +25,21 @@ public class Worker extends Datable implements Serializable {
     private String name;
 
     private String status;
+    private int port;
+    private String image;
+    private String command;
+    private WorkerStatus workerStatus;
 
-    private String port;
-
-    public Worker(String name,String status,String port){
+    public Worker(String name,String status,
+                  int port,String image,String command){
         this.name=name;
         this.status=status;
         this.port=port;
+        this.image=image;
+        this.command=command;
+    }
+
+    public Worker(String name,int port,WorkerStatus running){
+        super();
     }
 }

@@ -1,76 +1,64 @@
 package ai.openfabric.api.controller;
 
-import ai.openfabric.api.Service.DockerService;
-import ai.openfabric.api.model.Worker;
 import ai.openfabric.api.Service.WorkerService;
-import ai.openfabric.api.model.WorkerStatistics;
-import ai.openfabric.api.model.dto.CreateUserRequest;
-import org.hibernate.mapping.Map;
-import org.springframework.beans.factory.annotation.Autowired;
+import ai.openfabric.api.Service.dto.request.WorkerRequest;
+import ai.openfabric.api.Service.dto.response.WorkerResponse;
+import ai.openfabric.api.model.Worker;
+import com.github.dockerjava.api.model.Statistics;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("${node.api.path}/worker")
 public class WorkerController {
 
+    private final WorkerService workerService;
+
+    public WorkerController(WorkerService workerService) {
+        this.workerService = workerService;
+    }
 
     @PostMapping(path = "/hello")
     public @ResponseBody String hello(@RequestBody String name) {
         return "Hello!" + name;
     }
 
-        @Autowired
-        private WorkerService workerService;
+   @GetMapping(path="/listOfWorker")
+   @ResponseStatus(HttpStatus.ACCEPTED)
+   public Page<WorkerResponse> listOfWorkers(@RequestBody int pageNumber,int pageSize){
+        return workerService.listOfWorkers(pageNumber,pageSize);
+   }
 
-        @Autowired
-        private DockerService dockerService;
-
-        @PostMapping("/createWorker")
-        public Worker createWorker(@RequestBody CreateUserRequest createUserRequest) {
-            return workerService.createWorker(createUserRequest);
-        }
-
-        @GetMapping("/listWorkers")
-        public Page<Worker> listWorkers(@RequestParam(defaultValue = "0") Integer page,
-                                        @RequestParam(defaultValue = "10") Integer size) {
-            return workerService.listWorkers(PageRequest.of(page, size));
-        }
-
-        @GetMapping("/{id}")
-        public Worker getWorker(@PathVariable String  id) {
-            return workerService.getWorker(id);
-        }
-
-        @PostMapping("/{id}/start")
-        public void startWorker(@PathVariable String id) {
-            Worker worker = workerService.getWorker(id);
-            dockerService.startWorkerContainer(worker);
-        }
-
-        @PostMapping("/{id}/stop")
-        public void stopWorker(@PathVariable String id){
-    Worker worker = workerService.getWorker(id);
-        dockerService.stopWorkerContainer(worker);
-}
-
-    @GetMapping("/{id}/info")
-    public Map<String, Object> getWorkerInfo(@PathVariable String id) {
-        Worker worker = workerService.getWorker(id);
-        return dockerService.getWorkerContainerInfo(worker);
+    @PostMapping(path = "/startWorker")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public String startWorker(@RequestBody WorkerRequest workerRequest){
+        return workerService.startWorker(workerRequest);
     }
 
-    @GetMapping("/{id}/stats")
-    public List<WorkerStatistics> getWorkerStats(@PathVariable String  id) {
-        Worker worker = workerService.getWorker(id);
-        return workerService.getWorkerStatistics(worker);
+    @PostMapping(path = "/stopWorker")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public String stopWorker(@RequestBody String id) {
+        return workerService.stopWorker(id);
     }
+
+    @GetMapping(path = "/workerStats")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Statistics getWorkerStatistics(@RequestParam String id) throws IOException{
+        return workerService.getWorkerStatistics(id);
+    }
+    @GetMapping(path = "/getWorker")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Worker getWorker(@RequestParam String id){
+        return workerService.getWorker(id);
+    }
+
+
 }
 
 
 
 
-    }
+

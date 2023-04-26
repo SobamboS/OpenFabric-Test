@@ -36,6 +36,9 @@ dependencies {
 
     //docker dependency
     implementation 'com.github.docker-java:docker-java:3.3.0'
+    implementation group: 'com.github.docker-java', name: 'docker-java-transport', version: '3.2.13'
+    implementation group: 'com.github.docker-java', name: 'docker-java-transport-httpclient5', version: '3.3.0'
+
 
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.4'
 

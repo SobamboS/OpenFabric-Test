@@ -1,4 +1,4 @@
-package ai.openfabric.api.model.dto;
+package ai.openfabric.api.Service.dto.request;
 
 import lombok.Data;
 
